@@ -1,10 +1,13 @@
 import { AppRoutes } from "src/routes";
 import { AppTheme } from "src/theme";
+import { ContactsProvider } from "src/contexts";
 
 const App = () => {
   return (
     <AppTheme>
-      <AppRoutes />
+      <ContactsProvider>
+        <AppRoutes />
+      </ContactsProvider>
     </AppTheme>
   );
 };

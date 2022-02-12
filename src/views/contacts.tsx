@@ -1,15 +1,14 @@
+import { useContext } from "react";
 import * as Mui from "@mui/material";
+import { ContactContext } from "src/contexts";
 import { ContactCard } from "src/components";
 
 export const Contacts = () => {
-  const contactsList = [
-    { name: "Jim Halpert 1", uuid: "21" },
-    { name: "Jim Halpert 2", uuid: "13" },
-  ];
+  const contactCtx = useContext(ContactContext);
 
   return (
     <Mui.Stack p={1} sx={contactListStyles}>
-      {contactsList.map((contact, index) => (
+      {contactCtx?.contactsList.map((contact, index) => (
         <ContactCard key={index} contact={contact} />
       ))}
     </Mui.Stack>
