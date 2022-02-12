@@ -10,6 +10,7 @@ export const AddContact = () => {
   const handleClick = () => {
     const uuid = inputRef.current?.value;
     socket.emit("Event:AddContact", uuid);
+    inputRef.current.value = "";
   };
 
   return (

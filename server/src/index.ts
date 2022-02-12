@@ -7,46 +7,33 @@ const httpServer = createServer();
 const io = new Server(httpServer, { cors: { origin: "*" } });
 
 dotenv.config();
-const users = {};
+const users = [];
 
 io.on("connection", (socket) => {
-  console.log(users[socket.id], socket.rooms);
-
   socket.on("Event:RegisterUser", (userName) => {
-    users[socket.id] = userName;
-  });
-
-  socket.on("Event:AddContact", (uuid) => {
-    if (uuid in users) {
-      socket.emit("Event:ContactAdded", {
-        name: users[uuid],
-        uuid: uuid,
-        online: true,
-      });
-    }
-  });
-
-  // socket.on("Event:JoinRoom", (chatRoom) => {
-  //   socket.join(chatRoom);
-  //   console.log(users[socket.id], socket.rooms);
-  // });
-
-  // socket.on("Event:LeaveRoom", (chatRoom) => {
-  //   socket.leave(chatRoom);
-  //   console.log(users[socket.id], socket.rooms);
-  // });
-
-  socket.on("Event:SendMessage", (payload) => {
-    console.log(users[socket.id], socket.rooms);
-    io.to(payload.room).emit("Event:NewMessage", {
-      sender: { name: users[socket.id], id: socket.id },
-      message: payload.message,
-      room: payload.room,
+    users.push({
+      name: userName,
+      uuid: socket.id,
+      online: true,
+      hasUnreadMessages: false,
     });
   });
 
-  socket.on("disconnect", () => {
-    console.log(users[socket.id], socket.rooms);
+  socket.on("Event:AddContact", (uuid) => {
+    const contact = users.find((user) => user.uuid === uuid);
+    if (contact) socket.emit("Event:ContactAdded", contact);
+  });
+
+  socket.on("Event:SendMessage", (payload) => {
+    const sendToRoom = payload.room;
+    const messageToSend = payload.message;
+    const senderContact = users.find((user) => user.uuid === socket.id);
+
+    io.to(sendToRoom).emit("Event:NewMessage", {
+      sender: senderContact,
+      content: messageToSend,
+      roomToReceive: socket.id,
+    });
   });
 });
 

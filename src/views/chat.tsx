@@ -1,32 +1,24 @@
 import * as Mui from "@mui/material";
 import { SendMessage } from "src/views";
 import { Message } from "src/components";
-import { useParams } from "react-router-dom";
-import { useContext, useEffect } from "react";
-import { SocketContext, MessagesContext } from "src/contexts";
+import * as contexts from "src/contexts";
+import { useContext, useEffect, useRef } from "react";
 
 export const Chat = () => {
-  const { uuid } = useParams();
-  const socket = useContext(SocketContext);
-  const messages = useContext(MessagesContext);
+  const chatRoom = useContext(contexts.ChatRoomContext);
+  const messages = useContext(contexts.MessagesContext);
+  const chatAreaRef = useRef();
 
   useEffect(() => {
-    socket.emit("Event:JoinRoom", uuid);
-    socket.on("Event:NewMessage", (receivedMessage) => {
-      console.log(receivedMessage);
-    });
-    return () => {
-      socket.off("Event:NewMessage");
-      socket.emit("Event:LeaveRoom", uuid);
-    };
-  });
+    messages?.markAllAsRead(chatRoom?.contact?.uuid || "");
+  }, [messages?.messages.length]);
 
   return (
     <>
       <Mui.Box position="relative" overflow="hidden" flexGrow={1}>
         <Mui.Stack spacing={2} p={3} sx={chatListStyles}>
           {messages?.messages
-            .filter((message) => message.room === uuid)
+            .filter((message) => message.room === chatRoom?.contact.uuid)
             .map((message, index) => (
               <Message
                 key={index}
