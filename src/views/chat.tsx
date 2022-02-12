@@ -1,25 +1,39 @@
 import * as Mui from "@mui/material";
-import { useParams } from "react-router-dom";
-import { Message } from "src/components";
-import { useContext } from "react";
 import { SendMessage } from "src/views";
-import { ChatContext, ContactContext } from "src/contexts";
+import { Message } from "src/components";
+import { useParams } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { SocketContext, MessagesContext } from "src/contexts";
 
 export const Chat = () => {
   const { uuid } = useParams();
-  const chatCtx = useContext(ChatContext);
-  const contactCtx = useContext(ContactContext);
-  const currentUser = contactCtx?.contactsList.find(
-    (contact) => contact.uuid === uuid
-  );
-  if (currentUser) chatCtx?.setChat(currentUser);
+  const socket = useContext(SocketContext);
+  const messages = useContext(MessagesContext);
+
+  useEffect(() => {
+    socket.emit("Event:JoinRoom", uuid);
+    socket.on("Event:NewMessage", (receivedMessage) => {
+      console.log(receivedMessage);
+    });
+    return () => {
+      socket.off("Event:NewMessage");
+      socket.emit("Event:LeaveRoom", uuid);
+    };
+  });
 
   return (
     <>
       <Mui.Box position="relative" overflow="hidden" flexGrow={1}>
         <Mui.Stack spacing={2} p={3} sx={chatListStyles}>
-          <Message text={`Hi Jim ${uuid}`} owner={uuid !== "22"} />
-          <Message text={`Hello ${uuid}`} owner={uuid === "22"} />
+          {messages?.messages
+            .filter((message) => message.room === uuid)
+            .map((message, index) => (
+              <Message
+                key={index}
+                text={message.message}
+                owner={message.owner}
+              />
+            ))}
         </Mui.Stack>
       </Mui.Box>
       <Mui.Box>

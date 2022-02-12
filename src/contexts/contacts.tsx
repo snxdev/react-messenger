@@ -9,8 +9,9 @@ export const ContactsProvider = ({ children }: ProviderProps) => {
   const [contactsList, setContactsList] = useState<contact[]>([]);
 
   const handleAddContact = (contact: contact) => {
-    if (contactsList.length > 0) setContactsList([...contactsList, contact]);
-    else setContactsList([contact]);
+    setContactsList((prevState) => {
+      return [...prevState, contact];
+    });
   };
 
   const contextValue = {

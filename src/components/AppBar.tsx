@@ -1,27 +1,38 @@
-import * as Mui from "@mui/material";
 import { useContext } from "react";
-import { ChatContext } from "src/contexts";
+import * as Mui from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
+import { ChatRoomContext, SocketContext } from "src/contexts";
+import OfflineShareIcon from "@mui/icons-material/OfflineShare";
 
 export const AppBar = () => {
-  const chatCtx = useContext(ChatContext);
+  const chatRoom = useContext(ChatRoomContext);
+  const socket = useContext(SocketContext);
+
+  const handleClick = () => {
+    navigator.clipboard.writeText(socket.id);
+  };
 
   return (
     <Mui.AppBar position="fixed">
       <Mui.Toolbar>
+        <Mui.Tooltip title="copy your chat id">
+          <Mui.IconButton onClick={handleClick}>
+            <OfflineShareIcon />
+          </Mui.IconButton>
+        </Mui.Tooltip>
         <Mui.Typography variant="h5" flexGrow={1}>
           NETCHAT
         </Mui.Typography>
-        {chatCtx?.contact ? (
+        {chatRoom?.contact ? (
           <>
             <Mui.Typography variant="h5" mr={2}>
-              {chatCtx?.contact.name}
+              {chatRoom?.contact.name}
             </Mui.Typography>
             <CircleIcon
-              color={chatCtx?.contact.online ? "success" : "disabled"}
+              color={chatRoom?.contact.online ? "success" : "disabled"}
               sx={{ m: 1 }}
             />
-            {chatCtx?.contact.online ? (
+            {chatRoom?.contact.online ? (
               <Mui.Typography>Online</Mui.Typography>
             ) : null}
           </>

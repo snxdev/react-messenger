@@ -8,7 +8,13 @@ export interface contactContext {
   addContact: (contact: contact) => void;
 }
 
-export interface chatContext {
+export interface chatRoomContext {
   contact: contact;
-  setChat: (contact: contact) => void;
+  setChatRoom: (contact: any) => void;
+}
+
+export type message = { room: string; owner: boolean; message: string };
+export interface messagesContext {
+  messages: message[];
+  cacheMessage: (message: message) => void;
 }

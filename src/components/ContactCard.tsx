@@ -1,42 +1,52 @@
+import { useContext } from "react";
+import { contact } from "src/ts";
 import * as Mui from "@mui/material";
-import { Link } from "react-router-dom";
 import { styled } from "@mui/system";
+import { useNavigate } from "react-router-dom";
+import { ChatRoomContext, ContactContext } from "src/contexts";
 
 export const ContactCard = (props: ContactCardProps) => {
+  const navigate = useNavigate();
+  const chatRoom = useContext(ChatRoomContext);
+  const contacts = useContext(ContactContext);
+
   const ContactContainer = styled(Mui.Box)(({ theme }) => ({
     "&:hover": { background: theme.palette.secondary.light },
   }));
 
+  const handleClick = () => {
+    navigate(`${props.contact.uuid}`);
+    const currentContact = contacts?.contactsList.find(
+      (contact) => contact.uuid === props.contact.uuid
+    );
+    chatRoom?.setChatRoom(currentContact);
+  };
+
   return (
-    <Link to={props.contact.uuid} style={LinkStyle}>
-      <ContactContainer>
-        <Mui.Stack direction="row" spacing={2} alignItems="center" p={1}>
-          <Mui.Avatar {...stringAvatar(props.contact.name)} />
-          <Mui.Typography>{props.contact.name}</Mui.Typography>
-        </Mui.Stack>
-      </ContactContainer>
-    </Link>
+    <ContactContainer onClick={handleClick}>
+      <Mui.Stack direction="row" spacing={2} alignItems="center" p={1}>
+        <Mui.Avatar {...stringAvatar(props.contact.name)} />
+        <Mui.Typography>{props.contact.name}</Mui.Typography>
+      </Mui.Stack>
+    </ContactContainer>
   );
 };
 
 interface ContactCardProps {
-  contact: {
-    name: string;
-    uuid: string;
-  };
+  contact: contact;
 }
 
-const LinkStyle = {
-  textDecoration: "none",
-  color: "unset",
+const stringAvatar = (name: string) => {
+  const nameSplit = name.split(" ");
+  const firstLetter = nameSplit[0][0];
+  const secondLetter = nameSplit.length > 1 ? nameSplit[1][0] : nameSplit[0][1];
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+    },
+    children: `${firstLetter}${secondLetter}`,
+  };
 };
-
-const stringAvatar = (name: string) => ({
-  sx: {
-    bgcolor: stringToColor(name),
-  },
-  children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
-});
 
 const stringToColor = (string: string) => {
   let hash = 0;

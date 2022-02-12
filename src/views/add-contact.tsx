@@ -1,19 +1,15 @@
 import * as Mui from "@mui/material";
-import { ContactContext } from "src/contexts";
 import { useContext, useRef } from "react";
+import { SocketContext } from "src/contexts";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 export const AddContact = () => {
-  const contactCtx = useContext(ContactContext);
+  const socket = useContext(SocketContext);
   const inputRef = useRef(document.createElement("input"));
 
   const handleClick = () => {
     const uuid = inputRef.current?.value;
-    contactCtx?.addContact({
-      name: `Unknown ${uuid}`,
-      uuid: uuid,
-      online: true,
-    });
+    socket.emit("Event:AddContact", uuid);
   };
 
   return (

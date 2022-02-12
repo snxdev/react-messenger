@@ -1,14 +1,24 @@
-import { useContext } from "react";
 import * as Mui from "@mui/material";
-import { ContactContext } from "src/contexts";
 import { ContactCard } from "src/components";
+import { useContext, useEffect } from "react";
+import { ContactContext, SocketContext } from "src/contexts";
 
 export const Contacts = () => {
-  const contactCtx = useContext(ContactContext);
+  const contacts = useContext(ContactContext);
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    socket.on("Event:ContactAdded", (userData) => {
+      contacts?.addContact(userData);
+    });
+    return () => {
+      socket.off("Event:ContactAdded");
+    };
+  }, []);
 
   return (
     <Mui.Stack p={1} sx={contactListStyles}>
-      {contactCtx?.contactsList.map((contact, index) => (
+      {contacts?.contactsList.map((contact, index) => (
         <ContactCard key={index} contact={contact} />
       ))}
     </Mui.Stack>

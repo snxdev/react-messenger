@@ -1,15 +1,19 @@
 import { AppRoutes } from "src/routes";
 import { AppTheme } from "src/theme";
-import { ChatProvider, ContactsProvider } from "src/contexts";
+import * as Contexts from "src/contexts";
 
 const App = () => {
   return (
     <AppTheme>
-      <ContactsProvider>
-        <ChatProvider>
-          <AppRoutes />
-        </ChatProvider>
-      </ContactsProvider>
+      <Contexts.SocketProvider>
+        <Contexts.ContactsProvider>
+          <Contexts.ChatRoomProvider>
+            <Contexts.MessagesProvider>
+              <AppRoutes />
+            </Contexts.MessagesProvider>
+          </Contexts.ChatRoomProvider>
+        </Contexts.ContactsProvider>
+      </Contexts.SocketProvider>
     </AppTheme>
   );
 };
