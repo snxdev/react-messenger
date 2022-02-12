@@ -1,10 +1,18 @@
 import * as Mui from "@mui/material";
 import { useParams } from "react-router-dom";
 import { Message } from "src/components";
+import { useContext } from "react";
 import { SendMessage } from "src/views";
+import { ChatContext, ContactContext } from "src/contexts";
 
 export const Chat = () => {
   const { uuid } = useParams();
+  const chatCtx = useContext(ChatContext);
+  const contactCtx = useContext(ContactContext);
+  const currentUser = contactCtx?.contactsList.find(
+    (contact) => contact.uuid === uuid
+  );
+  if (currentUser) chatCtx?.setChat(currentUser);
 
   return (
     <>

@@ -1,20 +1,19 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, useState } from "react";
+import { contact, ProviderProps, contactContext } from "src/ts";
 
-export const ContactContext = createContext<contactContext.context | undefined>(
+export const ContactContext = createContext<contactContext | undefined>(
   undefined
 );
 
-export const ContactsProvider = ({ children }: contactContext.contactProps) => {
-  const [contactsList, setContactsList] = useState<contactContext.contact[]>(
-    []
-  );
+export const ContactsProvider = ({ children }: ProviderProps) => {
+  const [contactsList, setContactsList] = useState<contact[]>([]);
 
-  const handleAddContact = (contact: { name: string; uuid: string }) => {
+  const handleAddContact = (contact: contact) => {
     if (contactsList.length > 0) setContactsList([...contactsList, contact]);
     else setContactsList([contact]);
   };
 
-  const contextValue: contactContext.context = {
+  const contextValue = {
     contactsList: contactsList,
     addContact: handleAddContact,
   };
@@ -25,12 +24,3 @@ export const ContactsProvider = ({ children }: contactContext.contactProps) => {
     </ContactContext.Provider>
   );
 };
-
-namespace contactContext {
-  export type contact = { name: string; uuid: string };
-  export type contactProps = { children: ReactNode };
-  export interface context {
-    contactsList: contact[];
-    addContact: (contact: contact) => void;
-  }
-}
