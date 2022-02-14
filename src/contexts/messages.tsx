@@ -9,6 +9,10 @@ export const MessagesContext = createContext<messagesContext | undefined>(
 
 export const MessagesProvider = ({ children }: ProviderProps) => {
   const [messages, setMessages] = useState<message[]>([]);
+  const [notificationRequested, setNotificationRequested] = useState(false);
+  const [notificationPermission, setNotificationPermission] =
+    useState("denied");
+
   const socket = useContext(contexts.SocketContext);
   const contacts = useContext(contexts.ContactContext);
   const chatRoom = useContext(contexts.ChatRoomContext);
@@ -38,12 +42,16 @@ export const MessagesProvider = ({ children }: ProviderProps) => {
   });
 
   const notifyUser = (notification: notificationProps) => {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted")
-        new Notification(notification.title, {
-          body: notification.body || "",
-        });
-    });
+    if (!notificationRequested) {
+      Notification.requestPermission().then((permission) => {
+        setNotificationRequested(true);
+        setNotificationPermission(permission);
+      });
+    }
+    if (notificationRequested && notificationPermission === "granted")
+      new Notification(notification.title, {
+        body: notification.body || "",
+      });
   };
 
   const handleCacheMessage = (message: message) => {
