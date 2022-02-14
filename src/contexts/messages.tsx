@@ -11,6 +11,7 @@ export const MessagesProvider = ({ children }: ProviderProps) => {
   const [messages, setMessages] = useState<message[]>([]);
   const socket = useContext(contexts.SocketContext);
   const contacts = useContext(contexts.ContactContext);
+  const chatRoom = useContext(contexts.ChatRoomContext);
 
   useEffect(() => {
     socket.on("Event:NewMessage", (incomingMessage) => {
@@ -23,7 +24,7 @@ export const MessagesProvider = ({ children }: ProviderProps) => {
         room: incomingMessage.roomToReceive,
         owner: false,
         message: incomingMessage.content,
-        unread: true,
+        unread: chatRoom?.contact?.uuid === senderId ? false : true,
       });
       const inContacts = contacts?.contactsList.find(
         (contact) => contact.uuid === senderId
