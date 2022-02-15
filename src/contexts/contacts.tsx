@@ -7,6 +7,7 @@ export const ContactContext = createContext<contactContext | undefined>(
 
 export const ContactsProvider = ({ children }: ProviderProps) => {
   const [contactsList, setContactsList] = useState<contact[]>([]);
+  const [name, setName] = useState("");
 
   const handleAddContact = (contact: contact) => {
     setContactsList((prevState) => {
@@ -17,6 +18,8 @@ export const ContactsProvider = ({ children }: ProviderProps) => {
   const contextValue = {
     contactsList: contactsList,
     addContact: handleAddContact,
+    setUserName: setName,
+    username: name,
   };
 
   return (

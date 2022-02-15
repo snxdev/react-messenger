@@ -1,7 +1,7 @@
 import { styled } from "@mui/system";
 import { Stack, Typography } from "@mui/material";
 
-export const Message = (props: { text: string; owner: boolean }) => {
+export const Message = (props: MessageProps) => {
   const MessageComponent = styled(Stack)(({ theme }) => ({
     backgroundColor: props.owner
       ? theme.palette.primary.light
@@ -12,8 +12,19 @@ export const Message = (props: { text: string; owner: boolean }) => {
   }));
 
   return (
-    <MessageComponent>
-      <Typography>{props.text}</Typography>
-    </MessageComponent>
+    <>
+      <MessageComponent>
+        <Typography fontWeight="bold">
+          {props.owner ? "You" : props.ownerName}
+        </Typography>
+        <Typography>{props.text}</Typography>
+      </MessageComponent>
+    </>
   );
 };
+
+interface MessageProps {
+  text: string;
+  owner: boolean;
+  ownerName: string;
+}

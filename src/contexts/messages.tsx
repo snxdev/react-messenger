@@ -20,20 +20,27 @@ export const MessagesProvider = ({ children }: ProviderProps) => {
   useEffect(() => {
     socket.on("Event:NewMessage", (incomingMessage) => {
       const senderId = incomingMessage.sender.uuid;
-      notifyUser({
-        title: `New Message From ${incomingMessage.sender.name}`,
-        body: incomingMessage.content,
-      });
-      handleCacheMessage({
-        room: incomingMessage.roomToReceive,
-        owner: false,
-        message: incomingMessage.content,
-        unread: chatRoom?.contact?.uuid === senderId ? false : true,
-      });
-      const inContacts = contacts?.contactsList.find(
-        (contact) => contact.uuid === senderId
-      );
-      if (!inContacts) socket.emit("Event:AddContact", senderId);
+      if (senderId !== socket.id) {
+        notifyUser({
+          title: `New Message From ${incomingMessage.sender.name}`,
+          body: incomingMessage.content,
+        });
+
+        const activeRoom = chatRoom?.contact?.uuid;
+        handleCacheMessage({
+          room: incomingMessage.roomToReceive,
+          owner: { name: incomingMessage.sender.name, uuid: senderId },
+          message: incomingMessage.content,
+          unread: activeRoom === incomingMessage.roomToReceive ? false : true,
+        });
+
+        if (!incomingMessage.isGroup) {
+          const inContacts = contacts?.contactsList.find(
+            (contact) => contact.uuid === senderId
+          );
+          if (!inContacts) socket.emit("Event:AddContact", senderId);
+        }
+      }
     });
 
     return () => {

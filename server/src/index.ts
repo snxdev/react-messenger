@@ -25,6 +25,18 @@ io.on("connection", (socket) => {
     if (contact) socket.emit("Event:ContactAdded", contact);
   });
 
+  socket.on("Event:AddGroup", (group) => {
+    const groupAdmin = users.find((user) => user.uuid === socket.id);
+    io.to(group.members).emit("Event:JoinGroupAck", {
+      ...group,
+      owner: groupAdmin,
+    });
+  });
+
+  socket.on("Event:JoinGroupConfirmation", (groupName) => {
+    socket.join(groupName);
+  });
+
   socket.on("Event:SendMessage", (payload) => {
     const sendToRoom = payload.room;
     const messageToSend = payload.message;
@@ -33,7 +45,8 @@ io.on("connection", (socket) => {
     io.to(sendToRoom).emit("Event:NewMessage", {
       sender: senderContact,
       content: messageToSend,
-      roomToReceive: socket.id,
+      roomToReceive: payload.isGroup ? sendToRoom : socket.id,
+      isGroup: payload.isGroup,
     });
   });
 });

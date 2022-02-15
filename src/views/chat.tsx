@@ -7,7 +7,7 @@ import { useContext, useEffect, useRef } from "react";
 export const Chat = () => {
   const chatRoom = useContext(contexts.ChatRoomContext);
   const messages = useContext(contexts.MessagesContext);
-  const chatAreaRef = useRef();
+  const socket = useContext(contexts.SocketContext);
 
   useEffect(() => {
     messages?.markAllAsRead(chatRoom?.contact?.uuid || "");
@@ -23,7 +23,8 @@ export const Chat = () => {
               <Message
                 key={index}
                 text={message.message}
-                owner={message.owner}
+                owner={message.owner.uuid === socket.id}
+                ownerName={message.owner.name}
               />
             ))}
         </Mui.Stack>

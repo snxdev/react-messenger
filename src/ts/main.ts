@@ -12,6 +12,8 @@ export type ProviderProps = { children: ReactNode };
 export interface contactContext {
   contactsList: contact[];
   addContact: (contact: contact) => void;
+  setUserName: (name: string) => void;
+  username: string;
 }
 
 export interface chatRoomContext {
@@ -21,7 +23,7 @@ export interface chatRoomContext {
 
 export type message = {
   room: string;
-  owner: boolean;
+  owner: { name: string; uuid: string };
   message: string;
   unread: boolean;
 };

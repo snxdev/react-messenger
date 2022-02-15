@@ -1,16 +1,16 @@
 import * as Mui from "@mui/material";
-import { SocketContext } from "src/contexts";
+import { SocketContext, ContactContext } from "src/contexts";
 import { useContext, useRef, useState } from "react";
 
 export const Intro = () => {
-  const [name, setName] = useState("");
+  const contacts = useContext(ContactContext);
   const socket = useContext(SocketContext);
   const inputRef = useRef(document.createElement("input"));
 
   const handleClick = () => {
     const name = inputRef.current?.value;
     if (name.length > 2) {
-      setName(name);
+      contacts?.setUserName(name);
       socket.emit("Event:RegisterUser", name);
     }
   };
@@ -22,7 +22,7 @@ export const Intro = () => {
       justifyContent="center"
       flexGrow={1}
     >
-      {name === "" ? (
+      {contacts?.username === "" ? (
         <>
           <Mui.Typography variant="h3">Welcome To NetChat</Mui.Typography>
           <Mui.TextField
@@ -42,7 +42,9 @@ export const Intro = () => {
         </>
       ) : (
         <>
-          <Mui.Typography variant="h3">Hello {name}</Mui.Typography>
+          <Mui.Typography variant="h3">
+            Hello {contacts?.username}
+          </Mui.Typography>
           <Mui.Typography variant="h5" my={2}>
             Add some friends and start chatting
           </Mui.Typography>

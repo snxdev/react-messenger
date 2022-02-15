@@ -1,5 +1,5 @@
 import * as Mui from "@mui/material";
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 import { SocketContext, ContactContext } from "src/contexts";
 import { stringAvatar } from "src/utils";
 import { contact as contactType } from "src/ts";
@@ -11,14 +11,25 @@ export const AddGroup = (props: AddGroupProps) => {
   const [members, setMembers] = useState<contactType[]>([]);
 
   const handleToggle = (contact: contactType) => () => {
-    setMembers([...members, contact]);
+    const currentIndex = members.indexOf(contact);
+    const newChecked = [...members];
+    if (currentIndex === -1) {
+      newChecked.push(contact);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+    setMembers(newChecked);
   };
 
   const handleCreateGroup = () => {
-    props.onClose();
-    console.log("GroupName:", inputRef.current.value);
-    console.log("Members", members);
-    setMembers([]);
+    if (inputRef.current.value.length > 2) {
+      props.onClose();
+      socket.emit("Event:AddGroup", {
+        name: inputRef.current.value,
+        members: [...members.map((member) => member.uuid), socket.id],
+      });
+      setMembers([]);
+    }
   };
 
   return (
@@ -42,7 +53,11 @@ export const AddGroup = (props: AddGroupProps) => {
               <Mui.ListItem
                 key={index}
                 secondaryAction={
-                  <Mui.Checkbox edge="end" onChange={handleToggle(contact)} />
+                  <Mui.Checkbox
+                    edge="end"
+                    onChange={handleToggle(contact)}
+                    checked={members.indexOf(contact) !== -1}
+                  />
                 }
                 disablePadding
               >

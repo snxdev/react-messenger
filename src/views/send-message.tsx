@@ -7,6 +7,7 @@ export const SendMessage = () => {
   const socket = useContext(contexts.SocketContext);
   const chatRoom = useContext(contexts.ChatRoomContext);
   const messages = useContext(contexts.MessagesContext);
+  const contacts = useContext(contexts.ContactContext);
   const inputRef = useRef(document.createElement("input"));
 
   const handleClick = () => {
@@ -16,15 +17,18 @@ export const SendMessage = () => {
     socket.emit("Event:SendMessage", {
       room: sendToRoom,
       message: messageToSend,
+      isGroup: chatRoom?.contact.isGroup,
     });
 
     messages?.cacheMessage({
       room: sendToRoom ? sendToRoom : "",
-      owner: true,
+      owner: {
+        name: contacts?.username || "",
+        uuid: socket.id,
+      },
       message: messageToSend,
       unread: false,
     });
-
     inputRef.current.value = "";
   };
 

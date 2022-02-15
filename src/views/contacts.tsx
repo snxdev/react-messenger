@@ -11,8 +11,20 @@ export const Contacts = () => {
     socket.on("Event:ContactAdded", (userData) => {
       contacts?.addContact(userData);
     });
+    socket.on("Event:JoinGroupAck", (group) => {
+      console.log("JoinGroupAck", group);
+      contacts?.addContact({
+        name: group.name,
+        uuid: group.name,
+        online: true,
+        hasUnreadMessages: false,
+        isGroup: true,
+      });
+      socket.emit("Event:JoinGroupConfirmation", group.name);
+    });
     return () => {
       socket.off("Event:ContactAdded");
+      socket.off("Event:JoinGroupAck");
     };
   }, []);
 
