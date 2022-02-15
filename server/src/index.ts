@@ -16,6 +16,7 @@ io.on("connection", (socket) => {
       uuid: socket.id,
       online: true,
       hasUnreadMessages: false,
+      isGroup: false,
     });
   });
 

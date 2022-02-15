@@ -5,6 +5,7 @@ export type contact = {
   uuid: string;
   online: boolean;
   hasUnreadMessages: boolean;
+  isGroup: boolean;
 };
 export type ProviderProps = { children: ReactNode };
 
