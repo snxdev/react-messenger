@@ -1,4 +1,4 @@
-# netchat
+# NetChat
 Instant Messaging Web Application
  
  ## About
