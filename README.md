@@ -23,11 +23,11 @@ Go to the project directory
 Install dependencies
 
 ```bash
-  npm install
+  npx lerna bootstrap
 ```
 
 Start the application
 
 ```bash
-  npm start
+  npx lerna run dev
 ```
